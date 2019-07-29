@@ -1,3 +1,2 @@
-# problemsolving
-This consists problem solved by me everyday
-
+# Problemsolving
+This consists problem solved by me
