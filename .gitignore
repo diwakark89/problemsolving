@@ -1,0 +1,9 @@
+**/target/**
+**/.settings
+**/.classpath
+.project
+**/.metadata/**
+**/.recommenders/**
+**/logs/**
+/.metadata/
+/.recommenders/
