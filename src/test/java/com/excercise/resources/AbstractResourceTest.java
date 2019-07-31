@@ -1,5 +1,6 @@
 package com.excercise.resources;
 
+import com.excercise.service.SetupTestData;
 import javax.ws.rs.core.Application;
 import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
@@ -19,6 +20,7 @@ public abstract class AbstractResourceTest extends JerseyTest {
 
     protected final static String RESOURCE_PATH = "";
     private long startTime;
+    private SetupTestData setup=null;
 
     @Rule
     public TestName testName = new TestName();
@@ -56,7 +58,8 @@ public abstract class AbstractResourceTest extends JerseyTest {
         System.out.println("-- ----------------------------");
         System.out.println("-- " + testName.getMethodName());
         startTime = System.currentTimeMillis();
-
+//        setup=new SetupTestData();
+//        setup.load();
     }
     
     @After
