@@ -7,4 +7,5 @@
 **/logs/**
 /.metadata/
 /.recommenders/
-target/
+/target
+/target/
