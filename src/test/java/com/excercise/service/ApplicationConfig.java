@@ -1,7 +1,7 @@
 package com.excercise.service;
 
-import com.excercise.repository.AccountRepository;
-import com.excercise.repository.TransactionRepository;
+import com.excercise.repository.AccountRepositoryIT;
+import com.excercise.repository.TransactionRepositoryIT;
 import com.excercise.resources.AccountResource;
 import com.excercise.resources.TransactionResource;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -31,8 +31,8 @@ public class ApplicationConfig extends ResourceConfig {
         return new AbstractBinder() {
             @Override
             protected void configure() {
-                bindFactory(SpikeCdiFactory.get(AccountRepository.class)).to(AccountRepository.class);
-                bindFactory(SpikeCdiFactory.get(TransactionRepository.class)).to(TransactionRepository.class);
+                bindFactory(SpikeCdiFactory.get(AccountRepositoryIT.class)).to(AccountRepositoryIT.class);
+                bindFactory(SpikeCdiFactory.get(TransactionRepositoryIT.class)).to(TransactionRepositoryIT.class);
                 
             }
         };

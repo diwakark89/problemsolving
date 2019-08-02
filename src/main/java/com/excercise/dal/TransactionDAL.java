@@ -65,7 +65,7 @@ public class TransactionDAL {
       PreparedStatement selectPreparedStatement = connection.prepareStatement(SelectQuery);
 
       ResultSet rs = selectPreparedStatement.executeQuery();
-      if(rs.next()) {
+      if (rs.next()) {
         transactionId = rs.getString("transactionId");
       }
       selectPreparedStatement.close();
@@ -73,6 +73,8 @@ public class TransactionDAL {
       throw new SQLException("Exception occured at getLastTranasctionDetail " + e.getMessage());
     } catch (Exception e) {
       throw new Exception("Exception occured at getLastTranasctionDetail " + e.getMessage());
+    } finally {
+      connection.close();
     }
     return transactionId;
   }
@@ -93,11 +95,13 @@ public class TransactionDAL {
       insertPreparedStatement.executeUpdate();
       insertPreparedStatement.close();
       connection.commit();
-
+      
     } catch (SQLException e) {
       System.out.println("Exception Message " + e.getLocalizedMessage());
     } catch (Exception e) {
       System.out.println("Exception Message " + e.getLocalizedMessage());
+    } finally {
+      connection.close();
     }
   }
 
@@ -118,6 +122,8 @@ public class TransactionDAL {
       throw new SQLException("Exception occured at getLastTranasctionDetail " + e.getMessage());
     } catch (Exception e) {
       throw new Exception("Exception occured at getLastTranasctionDetail " + e.getMessage());
+    } finally {
+      connection.close();
     }
   }
 
@@ -150,6 +156,8 @@ public class TransactionDAL {
       throw new SQLException("Exception occured at getLastTranasctionDetail " + e.getMessage());
     } catch (Exception e) {
       throw new Exception("Exception occured at getLastTranasctionDetail " + e.getMessage());
+    } finally {
+      connection.close();
     }
     return transactions;
   }

@@ -5,152 +5,70 @@
  */
 package com.excercise.dal;
 
-import com.excercise.util.DBManager;
 import com.excercise.dto.TransactionDTO;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import com.excercise.service.BaseTest;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import javax.inject.Inject;
+import org.apache.deltaspike.core.api.provider.BeanProvider;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
  * @author dikushwa
  */
-public class TransactionDAL {
+public class TransactionDALIT extends BaseTest {
 
-  @Inject
-  private DBManager dbManager;
+  private TransactionDAL transactionDAL;
 
-  public TransactionDTO getTranasctionDetail(String transactionId) throws Exception {
-    String SelectQuery = "select * from TRANSACTION where transactionId=?";
-
-    Connection connection = null;
-    TransactionDTO transactionDTO = null;
-    try {
-      connection = dbManager.getDBConnection();
-
-      PreparedStatement selectPreparedStatement = connection.prepareStatement(SelectQuery);
-      selectPreparedStatement.setString(1, transactionId);
-      ResultSet rs = selectPreparedStatement.executeQuery();
-
-      while (rs.next()) {
-        transactionDTO = new TransactionDTO();
-        transactionDTO.setTransactionId(rs.getString("transactionId"));
-        transactionDTO.setSrcAccount(rs.getString("srcAccountId"));
-        transactionDTO.setDestAccount(rs.getString("destAccountId"));
-        transactionDTO.setAmount(rs.getString("amount"));
-        transactionDTO.setStatus(rs.getString("status"));
-        transactionDTO.setDate(rs.getString("transactionDate"));
-      }
-      selectPreparedStatement.close();
-    } catch (SQLException e) {
-      throw new SQLException("Exception occured at getLastTranasctionDetail " + e.getMessage());
-    } catch (Exception e) {
-      throw new Exception("Exception occured at getLastTranasctionDetail " + e.getMessage());
-    }
-    return transactionDTO;
+  @Before
+  public void startUP() {
+    transactionDAL = BeanProvider.getContextualReference(TransactionDAL.class, false);
   }
 
-  public String getLastTranasctionDetail() throws Exception {
-    String SelectQuery = "select * from TRANSACTION order by transactionDate desc";
-    String transactionId = null;
-    Connection connection = null;
-    try {
-      connection = dbManager.getDBConnection();
-      PreparedStatement selectPreparedStatement = connection.prepareStatement(SelectQuery);
-
-      ResultSet rs = selectPreparedStatement.executeQuery();
-      if(rs.next()) {
-        transactionId = rs.getString("transactionId");
-      }
-      selectPreparedStatement.close();
-    } catch (SQLException e) {
-      throw new SQLException("Exception occured at getLastTranasctionDetail " + e.getMessage());
-    } catch (Exception e) {
-      throw new Exception("Exception occured at getLastTranasctionDetail " + e.getMessage());
-    }
-    return transactionId;
+  @Test
+  public void testGetTranasctionDetail() throws Exception {
+    String transactionId = "100000";
+    TransactionDTO transactionDTO = transactionDAL.getTranasctionDetail(transactionId);
+    assertEquals(transactionDTO.getSrcAccount(), "A000001");
+    System.out.println("Source account it: "+transactionDTO.getSrcAccount());
   }
 
-  public void createTransaction(TransactionDTO transactionDto) throws SQLException {
-    String InsertQuery = "INSERT INTO TRANSACTION(srcAccountId, destAccountId,amount,status,transactionDate) values(?,?,?,?,?)";
-    Connection connection = null;
-    try {
-      connection = dbManager.getDBConnection();
-      connection.setAutoCommit(false);
-      PreparedStatement insertPreparedStatement = connection.prepareStatement(InsertQuery);
-
-      insertPreparedStatement.setString(1, transactionDto.getSrcAccount());
-      insertPreparedStatement.setString(2, transactionDto.getDestAccount());
-      insertPreparedStatement.setString(3, transactionDto.getAmount());
-      insertPreparedStatement.setString(4, "N");
-      insertPreparedStatement.setTimestamp(5, new Timestamp(new java.util.Date().getTime()));
-      insertPreparedStatement.executeUpdate();
-      insertPreparedStatement.close();
-      connection.commit();
-
-    } catch (SQLException e) {
-      System.out.println("Exception Message " + e.getLocalizedMessage());
-    } catch (Exception e) {
-      System.out.println("Exception Message " + e.getLocalizedMessage());
-    }
+  @Test
+  public void testGetLastTranasctionDetail() throws Exception {
+    String transactionid = transactionDAL.getLastTranasctionDetail();
+    assertEquals("100006", transactionid);
+    System.out.println("transactionid: "+transactionid);
   }
 
-  public void updateStatus(String transactionId) throws Exception {
-    String InsertQuery = "update TRANSACTION set status='Y' where transactionId=?";
-    Connection connection = null;
-    try {
-      connection = dbManager.getDBConnection();
-      connection.setAutoCommit(false);
-      PreparedStatement insertPreparedStatement = connection.prepareStatement(InsertQuery);
-      insertPreparedStatement.setString(1, transactionId);
-      insertPreparedStatement.executeUpdate();
-      insertPreparedStatement.close();
-      connection.commit();
-
-    } catch (SQLException e) {
-      connection.rollback();
-      throw new SQLException("Exception occured at getLastTranasctionDetail " + e.getMessage());
-    } catch (Exception e) {
-      throw new Exception("Exception occured at getLastTranasctionDetail " + e.getMessage());
-    }
+  @Test
+  public void testCreateTransaction() throws SQLException, Exception {
+    String lastTransactionid = transactionDAL.getLastTranasctionDetail();
+    TransactionDTO transactionDto = new TransactionDTO();
+    transactionDto.setSrcAccount("A000001");
+    transactionDto.setDestAccount("A000002");
+    transactionDto.setAmount("100000");
+    transactionDAL.createTransaction(transactionDto);
+    String newTransactionid = transactionDAL.getLastTranasctionDetail();
+    assertNotEquals(lastTransactionid, newTransactionid);
+    System.out.println("newTransactionid: "+newTransactionid);
   }
 
-  public List<TransactionDTO> getAllTransactionsById(String accountId) throws Exception {
-    String SelectQuery = "select * from TRANSACTION where srcAccountId=? or destAccountId=? order by transactionDate desc";
+  @Test
+  public void testUpdateStatus() throws Exception {
+    String transactionId = "100000";
+    transactionDAL.updateStatus(transactionId);
+    TransactionDTO transactionDTO = transactionDAL.getTranasctionDetail(transactionId);
+    assertEquals("Y", transactionDTO.getStatus());
+    System.out.println("transactionDTO.getStatus(): "+transactionDTO.getStatus());
+  }
 
-    List<TransactionDTO> transactions = Collections.EMPTY_LIST;
-    TransactionDTO transactionDTO = null;
-    Connection connection = null;
-    try {
-      connection = dbManager.getDBConnection();
-      PreparedStatement selectPreparedStatement = connection.prepareStatement(SelectQuery);
-      selectPreparedStatement.setString(1, accountId);
-      selectPreparedStatement.setString(2, accountId);
-      ResultSet rs = selectPreparedStatement.executeQuery();
-      transactions = new ArrayList<>();
-      while (rs.next()) {
-        transactionDTO = new TransactionDTO();
-        transactionDTO.setTransactionId(rs.getString("transactionId"));
-        transactionDTO.setSrcAccount(rs.getString("srcAccountId"));
-        transactionDTO.setDestAccount(rs.getString("destAccountId"));
-        transactionDTO.setAmount(rs.getString("amount"));
-        transactionDTO.setStatus(rs.getString("status"));
-        transactionDTO.setDate(rs.getString("transactionDate"));
-        transactions.add(transactionDTO);
-      }
-      selectPreparedStatement.close();
-
-    } catch (SQLException e) {
-      throw new SQLException("Exception occured at getLastTranasctionDetail " + e.getMessage());
-    } catch (Exception e) {
-      throw new Exception("Exception occured at getLastTranasctionDetail " + e.getMessage());
-    }
-    return transactions;
+  @Test
+  public void testGetAllTransactionsById() throws Exception {
+    String accountId = "A000003";
+    List<TransactionDTO> transactionsList = transactionDAL.getAllTransactionsById(accountId);
+    assertEquals(10, transactionsList.size());
+    System.out.println("transactionsList.size(): "+transactionsList.size());
   }
 }

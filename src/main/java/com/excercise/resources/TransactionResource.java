@@ -8,7 +8,6 @@ package com.excercise.resources;
 import com.excercise.dto.TransactionDTO;
 import com.excercise.repository.TransactionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -27,7 +26,9 @@ import javax.ws.rs.core.Response;
 public class TransactionResource {
 
   @Inject
-  private TransactionRepository repository;
+  private TransactionRepository transactionRepository;
+
+  
   ObjectMapper mapper = null;
 
   @POST
@@ -39,12 +40,10 @@ public class TransactionResource {
     try {
 
       TransactionDTO transactionDto = mapper.readValue(transactionStr, TransactionDTO.class);
-      String transactionId = repository.createTransaction(transactionDto);
-      return Response.ok(repository.getTranasctionDetail(transactionId)).build();
+      return Response.ok(transactionRepository.createTransaction(transactionDto)).build();
     } catch (Exception e) {
-      return Response.status(Response.Status.BAD_REQUEST).entity(e.toString()).type(MediaType.TEXT_XML_TYPE).build();
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).type(MediaType.TEXT_XML_TYPE).build();
     }
-
   }
 
   @GET
@@ -52,9 +51,9 @@ public class TransactionResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getAllTransaction(@PathParam("accountId") String accountId) {
     try {
-      return Response.ok(repository.getAllTransactionsMesasge(accountId)).build();
+      return Response.ok(transactionRepository.getAllTransactionsMesasge(accountId)).build();
     } catch (Exception e) {
-      return Response.status(Response.Status.BAD_REQUEST).entity(e.toString()).type(MediaType.TEXT_XML_TYPE).build();
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).type(MediaType.TEXT_XML_TYPE).build();
     }
   }
 }

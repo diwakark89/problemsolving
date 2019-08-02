@@ -25,6 +25,9 @@ public class TransactionRepository {
 
   @Inject
   private AccountDAL accountDAL;
+  
+  @Inject
+  private AccountRepository accountRepository;
 
   @Inject
   private EntityMapper entityMapper;
@@ -34,26 +37,28 @@ public class TransactionRepository {
   }
 
   public String createTransaction(TransactionDTO transactionDto) throws Exception {
-    String transactionId = null;
+    String transactionId,message = null;
     float srcBalance, dstBalance, transferAmout;
     try {
       transferAmout = Float.parseFloat(transactionDto.getAmount());
-      srcBalance = Float.parseFloat(accountDAL.getAccountBalance(transactionDto.getSrcAccount()));
+      srcBalance = accountRepository.getAccountBalance(transactionDto.getSrcAccount());
       if (srcBalance < transferAmout) {
         throw new Exception("Insufficient fund to transact");
       } else {
-        dstBalance = Float.parseFloat(accountDAL.getAccountBalance(transactionDto.getDestAccount()));
+        dstBalance = accountRepository.getAccountBalance(transactionDto.getDestAccount());
         transactionDAL.createTransaction(transactionDto);
         transactionId = transactionDAL.getLastTranasctionDetail();
         accountDAL.updateAccountDetails(transactionDto.getSrcAccount(), srcBalance - transferAmout);
         accountDAL.updateAccountDetails(transactionDto.getDestAccount(), dstBalance + transferAmout);
-        transactionDAL.updateStatus(transactionId);
+        if(null != transactionId)
+          transactionDAL.updateStatus(transactionId);
       }
-
+      message="Fund transfered successfully";
     } catch (SQLException ex) {
-      throw new Exception("Exception occured at Transaction getAllTransactions" + ex.getMessage());
+      System.out.println("Exception occured at Transaction getAllTransactions: ");
+      throw new Exception(ex.getMessage());
     }
-    return transactionId;
+    return message;
   }
 
   public List<String> getAllTransactionsMesasge(String accountId) throws Exception {

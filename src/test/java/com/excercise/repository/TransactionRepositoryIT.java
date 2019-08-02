@@ -5,94 +5,73 @@
  */
 package com.excercise.repository;
 
-import com.excercise.dal.TransactionDAL;
-import com.excercise.dal.AccountDAL;
 import com.excercise.dto.TransactionDTO;
-import com.excercise.util.EntityMapper;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import com.excercise.service.BaseTest;
 import java.util.List;
-import javax.inject.Inject;
+import org.apache.deltaspike.core.api.provider.BeanProvider;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
  * @author dikushwa
  */
-public class TransactionRepository {
+public class TransactionRepositoryIT extends BaseTest {
 
-  @Inject
-  private TransactionDAL transactionDAL;
+  private TransactionRepository repository;
 
-  @Inject
-  private AccountDAL accountDAL;
+  @Before
+  public void startUp() {
 
-  @Inject
-  private EntityMapper entityMapper;
-
-  public TransactionDTO getTranasctionDetail(String transactionId) throws Exception {
-   return transactionDAL.getTranasctionDetail(transactionId);
+    repository = BeanProvider.getContextualReference(TransactionRepository.class, false);
   }
 
-  public String createTransaction(TransactionDTO transactionDto) throws Exception {
-    String transactionId = null;
-    float srcBalance, dstBalance, transferAmout;
-    try {
-      transferAmout = Float.parseFloat(transactionDto.getAmount());
-      srcBalance = Float.parseFloat(accountDAL.getAccountBalance(transactionDto.getSrcAccount()));
-      if (srcBalance < transferAmout) {
-        throw new Exception("Insufficient fund to transact");
-      } else {
-        dstBalance = Float.parseFloat(accountDAL.getAccountBalance(transactionDto.getDestAccount()));
-        transactionDAL.createTransaction(transactionDto);
-        transactionId = transactionDAL.getLastTranasctionDetail();
-        accountDAL.updateAccountDetails(transactionDto.getSrcAccount(), srcBalance - transferAmout);
-        accountDAL.updateAccountDetails(transactionDto.getDestAccount(), dstBalance + transferAmout);
-        transactionDAL.updateStatus(transactionId);
-      }
-
-    } catch (SQLException ex) {
-      throw new Exception("Exception occured at Transaction getAllTransactions" + ex.getMessage());
-    }
-    return transactionId;
+  @Test
+  public void testGetTranasctionDetail() throws Exception {
+    String transactionId = "100000";
+    TransactionDTO transactionDTO = repository.getTranasctionDetail(transactionId);
+    assertEquals(transactionDTO.getSrcAccount(), "A000001");
+    System.out.println("Source account it: " + transactionDTO.getSrcAccount());
   }
 
-  public List<String> getAllTransactionsMesasge(String accountId) throws Exception {
-    List<String> transactionList = null;
-    List<TransactionDTO> list = transactionDAL.getAllTransactionsById(accountId);
-    if (null != list && list.size() > 0) {
-      transactionList = new ArrayList<>();
-      for (TransactionDTO dto : list) {
-        try {
-          if (dto.getSrcAccount().equals(accountId)) {
-            transactionList.add(getCreditMessage(dto.getDate(), dto.getDestAccount(), dto.getAmount()));
-          } else if (dto.getDestAccount().equals(accountId)) {
-            transactionList.add(getDebitMessage(dto.getDate(), dto.getDestAccount(), dto.getAmount()));
-          }
-        } catch (Exception ex) {
-          throw new Exception("Exception occured at Transaction getAllTransactions" + ex.getMessage());
-        }
-      }
-    }
-    return transactionList;
+  @Test
+  public void TestCreateTransaction() throws Exception {
+    TransactionDTO transactionDto = new TransactionDTO();
+    transactionDto.setSrcAccount("A000001");
+    transactionDto.setDestAccount("A000002");
+    transactionDto.setAmount("100000");
+    repository.createTransaction(transactionDto);
   }
 
-  public String getAllTransactions(String accountId) throws Exception {
-    List<TransactionDTO> list = transactionDAL.getAllTransactionsById(accountId);
-    if (null != list && list.size() > 0) {
-      try {
-        return entityMapper.generateString(list);
-      } catch (Exception ex) {
-        throw new Exception("Exception occured at Transaction getAllTransactions" + ex.getMessage());
-      }
-    }
-    return null;
+  @Test
+  public void TestGetAllTransactionsMesasge() throws Exception {
+    
+    String accountId="A000001";
+    List<String> list = repository.getAllTransactionsMesasge(accountId);
+    assertEquals(10, list.size());
+
   }
 
-  public String getCreditMessage(String date, String dest, String amount) {
-    return "On " + date + " " + amount + " has been recieved from " + dest;
+  @Test
+  public void testGetAllTransactions() throws Exception {
+    String accountId = "A00001";
+    String list = repository.getAllTransactions(accountId);
+    assertNotEquals(null, list);
   }
 
-  public String getDebitMessage(String date, String dest, String amount) {
-    return "On " + date + " " + amount + " has been transfered to " + dest;
+  @Test
+  public void getCreditMessage() {
+    String date="2019-08-08",dest="A00001", amount="300000";
+    String message= repository.getCreditMessage(date, dest, amount);
+    System.out.println(message);
+  }
+
+  @Test
+  public void getDebitMessage() {
+    String date="2019-08-08",dest="A00001", amount="300000";
+    String message=repository.getDebitMessage(date, dest, amount);
+    System.out.println(message);
   }
 }
