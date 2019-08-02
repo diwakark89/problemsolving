@@ -1,6 +1,7 @@
 package com.excercise.resources;
 
 import com.excercise.service.ApplicationConfig;
+import com.excercise.service.SetupTestData;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import static org.junit.Assert.assertEquals;
@@ -11,13 +12,19 @@ import org.junit.Test;
  */
 public class AccountResourceIT extends AbstractResourceTest {
 
-  public final String TEST_ACCOUNT_ID = "A000010";
+  public final String TEST_ACCOUNT_ID = "A000001";
   public final String RESOURCE_BASE_URL = "account";
 
   @Override
   protected Application configure() {
     ApplicationConfig cfg = new ApplicationConfig();
     return cfg;
+  }
+   //Only run this method for first time
+  @Test
+  public void testSetupTestforFirstTime() {
+    SetupTestData data = new SetupTestData();
+    data.load();
   }
 
   @Test

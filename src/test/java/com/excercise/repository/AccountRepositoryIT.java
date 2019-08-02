@@ -5,7 +5,6 @@
  */
 package com.excercise.repository;
 
-import com.excercise.dal.AccountDAL;
 import com.excercise.dto.AccountDTO;
 import com.excercise.service.BaseTest;
 import java.sql.SQLException;
@@ -34,7 +33,9 @@ public class AccountRepositoryIT extends BaseTest {
   public void testGetAccountBalance() throws SQLException {
 
     float balance = accountRepository.getAccountBalance(ACCOUNT_Id);
+    System.out.println("=========Test Result=====");
     System.out.println(balance);
+    System.out.println("=========================");
   }
 
   @Test
@@ -46,7 +47,9 @@ public class AccountRepositoryIT extends BaseTest {
   @Test
   public void getAllAccountDetails() throws SQLException {
     List<AccountDTO> list= accountRepository.getAllAccountDetails();
+    System.out.println("=========Test Result=====");
     assertEquals(10, list.size());
+    System.out.println("=========================");
   }
 
 }

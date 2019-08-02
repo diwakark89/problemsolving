@@ -8,6 +8,7 @@ package com.excercise.resources;
 import com.excercise.dto.TransactionDTO;
 import com.excercise.repository.TransactionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -51,7 +52,11 @@ public class TransactionResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getAllTransaction(@PathParam("accountId") String accountId) {
     try {
-      return Response.ok(transactionRepository.getAllTransactionsMesasge(accountId)).build();
+      List<String> transactionList= transactionRepository.getAllTransactionsMesasge(accountId);
+      if(transactionList!=null && transactionList.size()>0)
+      return Response.ok(transactionList).build();
+      else
+        return Response.ok("There is no transactions made against your account").build();
     } catch (Exception e) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).type(MediaType.TEXT_XML_TYPE).build();
     }

@@ -34,7 +34,9 @@ public class AccountDALIT extends BaseTest {
     String accountId = "A000005";
     String balance = accountDAL.getAccountBalance(accountId);
     assertEquals("300000", balance);
+    System.out.println("=========Test Result=====");
     System.out.println("Balance: " + balance);
+    System.out.println("=========================");
 
   }
 
@@ -46,7 +48,9 @@ public class AccountDALIT extends BaseTest {
     String newBalance = accountDAL.getAccountBalance(accountId);
 
     assertEquals("310000", newBalance);
+    System.out.println("=========Test Result=====");
     System.out.println("Updated Balance: " + newBalance);
+    System.out.println("=========================");
 
   }
 
@@ -58,7 +62,9 @@ public class AccountDALIT extends BaseTest {
     String newBalance = accountDAL.getAccountBalance(accountId);
 
     assertEquals(null, newBalance);
+    System.out.println("=========Test Result=====");
     System.out.println("Updated Balance: " + newBalance);
+    System.out.println("=========================");
 
   }
 
@@ -66,7 +72,9 @@ public class AccountDALIT extends BaseTest {
   public void testGetAllAccounts() throws SQLException {
     List<AccountDTO> accountList = accountDAL.getAllAccounts();
     int count = accountList.size();
+    System.out.println("=========Test Result=====");
     System.out.println("Number of acccounts: " + count);
+    System.out.println("=========================");
     assertEquals(8, count);
   }
 

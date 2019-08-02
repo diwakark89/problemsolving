@@ -7,6 +7,7 @@ package com.excercise.resources;
 
 import static com.excercise.resources.AbstractResourceTest.RESOURCE_PATH;
 import com.excercise.service.ApplicationConfig;
+import com.excercise.service.SetupTestData;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -28,6 +29,14 @@ public class TransactionResourceIT extends AbstractResourceTest {
     return cfg;
   }
 
+  
+  //Only run this method for first time
+  @Test
+  public void testSetupTestforFirstTime() {
+    SetupTestData data = new SetupTestData();
+    data.load();
+  }
+  
   @Test
   public void testGetAll() {
     final Response response = target(RESOURCE_PATH + "/transaction").path("all").path(ACCOUNT_ID)

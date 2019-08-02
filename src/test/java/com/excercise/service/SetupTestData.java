@@ -12,7 +12,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.h2.tools.DeleteDbFiles;
@@ -23,10 +22,6 @@ import org.h2.tools.DeleteDbFiles;
  */
 public class SetupTestData {
 
-  private static final String DB_DRIVER = "org.h2.Driver";
-  private static final String DB_CONNECTION = "jdbc:h2:~/test";
-  private static final String DB_USER = "";
-  private static final String DB_PASSWORD = "";
   DBManager dBManager = new DBManager();
 
   public void runScript() throws ClassNotFoundException, SQLException {
@@ -60,21 +55,4 @@ public class SetupTestData {
     SetupTestData data = new SetupTestData();
     data.load();
   }
-
-//  private static Connection getDBConnection() {
-//    Connection dbConnection = null;
-//    try {
-//      Class.forName(DB_DRIVER);
-//    } catch (ClassNotFoundException e) {
-//      System.out.println(e.getMessage());
-//    }
-//    try {
-//      dbConnection = DriverManager.getConnection(DB_CONNECTION, DB_USER,
-//              DB_PASSWORD);
-//      return dbConnection;
-//    } catch (SQLException ex) {
-//      System.out.println(ex.getMessage());
-//    }
-//    return dbConnection;
-//  }
 }

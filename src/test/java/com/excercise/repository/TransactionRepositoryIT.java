@@ -33,7 +33,9 @@ public class TransactionRepositoryIT extends BaseTest {
     String transactionId = "100000";
     TransactionDTO transactionDTO = repository.getTranasctionDetail(transactionId);
     assertEquals(transactionDTO.getSrcAccount(), "A000001");
+    System.out.println("=======Test Result=======");
     System.out.println("Source account it: " + transactionDTO.getSrcAccount());
+    System.out.println("=========================");
   }
 
   @Test
@@ -50,7 +52,9 @@ public class TransactionRepositoryIT extends BaseTest {
     
     String accountId="A000001";
     List<String> list = repository.getAllTransactionsMesasge(accountId);
+    System.out.println("=======Test Result=======");
     assertEquals(10, list.size());
+    System.out.println("=========================");
 
   }
 
@@ -58,20 +62,26 @@ public class TransactionRepositoryIT extends BaseTest {
   public void testGetAllTransactions() throws Exception {
     String accountId = "A00001";
     String list = repository.getAllTransactions(accountId);
+    System.out.println("=======Test Result=======");
     assertNotEquals(null, list);
+    System.out.println("=========================");
   }
 
   @Test
   public void getCreditMessage() {
     String date="2019-08-08",dest="A00001", amount="300000";
     String message= repository.getCreditMessage(date, dest, amount);
+    System.out.println("=======Test Result=======");
     System.out.println(message);
+    System.out.println("=========================");
   }
 
   @Test
   public void getDebitMessage() {
     String date="2019-08-08",dest="A00001", amount="300000";
     String message=repository.getDebitMessage(date, dest, amount);
+    System.out.println("=======Test Result=======");
     System.out.println(message);
+    System.out.println("=========================");
   }
 }

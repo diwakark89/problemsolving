@@ -27,14 +27,6 @@ public abstract class AbstractResourceTest extends JerseyTest {
 
     private static CdiContainer cdiContainer;
 
-    public AbstractResourceTest() {
-//        System.setProperty("logback.LogPath", "target");
-//
-//
-//
-//        enable(TestProperties.LOG_TRAFFIC);
-//        enable(TestProperties.DUMP_ENTITY);
-    }
 
     @BeforeClass
     public static void startCdiContainer() {
@@ -42,7 +34,6 @@ public abstract class AbstractResourceTest extends JerseyTest {
         cdiContainer.boot();
         ContextControl contextControl = cdiContainer.getContextControl();
         contextControl.startContexts();
-        
         
     }
 
@@ -58,8 +49,7 @@ public abstract class AbstractResourceTest extends JerseyTest {
         System.out.println("-- ----------------------------");
         System.out.println("-- " + testName.getMethodName());
         startTime = System.currentTimeMillis();
-//        setup=new SetupTestData();
-//        setup.load();
+        System.out.println("-- ----------------------------");
     }
     
     @After
